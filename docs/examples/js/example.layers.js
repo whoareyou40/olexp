@@ -21,6 +21,14 @@ var runExampleLayers = function(id, examples) {
     layerosm.set('name','OpenStreetMap');
 
     // ==================================================
+    // Add MapQuest map
+    // --------------------------------------------------
+    var layermq = new ol.layer.Tile({
+        source: new ol.source.MapQuest({layer: 'sat'})
+    });
+    layermq.set('name','MapQuest');
+
+    // ==================================================
     // Add Stamen map
     // --------------------------------------------------
     var layerstm = new ol.layer.Tile({
@@ -33,7 +41,7 @@ var runExampleLayers = function(id, examples) {
     // --------------------------------------------------
 
     var tiles = new ol.layer.Group({
-        layers: [layerosm, layerstm]
+        layers: [layerosm, layermq, layerstm]
       });
     tiles.set('name','Tiles');
     explorer.map.addLayer(tiles);

@@ -1,15 +1,6 @@
 OpenLayers Explorer
 ============================================================
 
-[![build](https://travis-ci.org/dpmcmlxxvi/olexp.svg?branch=master)](https://travis-ci.org/dpmcmlxxvi/olexp)
-[![coverage](https://img.shields.io/coveralls/dpmcmlxxvi/olexp/master.svg)](https://coveralls.io/github/dpmcmlxxvi/olexp?branch=master)
-[![codacy](https://img.shields.io/codacy/grade/df098e3d833a44a3af028f712c4ee75e/master.svg)](https://www.codacy.com/app/dpmcmlxxvi/olexp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dpmcmlxxvi/olexp&amp;utm_campaign=Badge_Grade)
-[![npm](https://badge.fury.io/js/olexp.svg)](https://badge.fury.io/js/olexp)
-[![dependencies](https://img.shields.io/david/dpmcmlxxvi/olexp.svg)](https://david-dm.org/dpmcmlxxvi/olexp)
-[![devdependencies](https://img.shields.io/david/dev/dpmcmlxxvi/olexp/master.svg)](https://david-dm.org/dpmcmlxxvi/olexp/master#info=devDependencies)
-[![Greenkeeper](https://badges.greenkeeper.io/dpmcmlxxvi/olexp.svg)](https://greenkeeper.io/)
-[![grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
-
 OpenLayers Explorer (olexp) is a Javascript library that combines the mapping
 power of [OpenLayers](http://openlayers.org/) and the layout management of
 [w2ui](http://w2ui.com). The olexp library can be used to create web
@@ -22,12 +13,7 @@ a layer manager and a toolbar.
 DOCUMENTATION
 ------------------------------------------------------------
 
-The following help is available at the olexp
-[website](http://dpmcmlxxvi.github.io/olexp):
-
-- [Documentation](http://dpmcmlxxvi.github.io/olexp/docs/web/)
-- [Examples](http://dpmcmlxxvi.github.io/olexp/docs/web/demos.html)
-- [API](http://dpmcmlxxvi.github.io/olexp/docs/api/)
+The library documentation is available [here](http://dpmcmlxxvi.github.io/olexp).
 
 BUILD
 ------------------------------------------------------------
@@ -42,24 +28,6 @@ To build the library clone it, install it, then grunt it
     git clone https://github.com/dpmcmlxxvi/olexp.git
     npm install
     grunt
-
-TEST
-------------------------------------------------------------
-
-To run the unit tests
-
-    grunt test
-
-Then open the coverage report in the `coverage` directory in a browser.
-
-NPM
-------------------------------------------------------------
-
-The olexp library source and distribution is also available as a npm package
-[here](https://www.npmjs.com/package/olexp). The following installs the olexp
-package:
-
-    npm install olexp
 
 LICENSE
 ------------------------------------------------------------
