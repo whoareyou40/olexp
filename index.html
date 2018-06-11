@@ -129,7 +129,7 @@
                         onClose: function (event) { console.info("清除"); w2popup.clear(); },
                     })
                     */
-                    popup();
+                    popupFunction();
                 }
             }
         ]
@@ -205,8 +205,13 @@
 
 
     //弹出详细信息
-    function popup() {
-       // w2popup.clear();
+    function popupFunction() {
+        // w2popup.clear();
+        //   $("#detailLayout").empty();
+        if (w2ui['detailLayout']) w2ui['detailLayout'].destroy();
+        if (w2ui['gridD1']) w2ui['gridD1'].clear();
+        if (w2ui['gridD0']) w2ui['gridD0'].clear();
+        if (w2ui['gridD2']) w2ui['gridD2'].clear();
         w2popup.open({
             title: 'Popup Title',
             body: '<div id="detailLayout" style="width: 100%; height: 100%;"></div>',
@@ -215,17 +220,23 @@
             height: 600,
             onOpen: function (event) {
                 event.onComplete = function () {
-                    $('#w2ui-popup #detailLayout').w2render('detailLayout');
+                    //         $('#w2ui-popup #detailLayout').w2render('detailLayout');
                     w2ui['detailLayout'].content('top', w2ui['gridD0']);
                     w2ui['detailLayout'].content('left', w2ui['gridD1']);
                     w2ui['detailLayout'].content('main', w2ui['gridD2']);
                 };
             },
+            onToggle: function (event) {
+                event.onComplete = function () {
+                    w2ui.layout.resize();
+                }
+            }
         });
 
-        $(function () {
+            $(function () {
 
-            var pstyle = 'border: 1px solid #dfdfdf; padding: 5px;';
+        var pstyle = 'border: 1px solid #dfdfdf; padding: 5px;';
+        if (!(w2ui['detailLayout'])) {
             $('#detailLayout').w2layout({
                 name: 'detailLayout',
                 panels: [
@@ -234,9 +245,9 @@
                     { type: 'main', style: pstyle, content: 'main' }
                 ]
             });
+        }
 
-
-
+        if (!(w2ui['gridD0'])) {
             $('#gridD0').w2grid({
                 name: 'gridD0',
                 header: 'Detail',
@@ -301,28 +312,31 @@
                     { field: 'value', caption: 'Value', size: '100%' }
                 ]
             });
+        }
 
-            w2ui['gridD1'].add([
-                { recid: 0, name: 'Property Code', value: '' },
-                { recid: 1, name: 'Property Name', value: '' },
-                { recid: 2, name: 'Country:', value: '' },
-                { recid: 3, name: 'City', value: '' },
-                { recid: 4, name: 'Address', value: "" }
-            ]);
+        w2ui['gridD1'].add([
+            { recid: 0, name: 'Property Code', value: '' },
+            { recid: 1, name: 'Property Name', value: '' },
+            { recid: 2, name: 'Country:', value: '' },
+            { recid: 3, name: 'City', value: '' },
+            { recid: 4, name: 'Address', value: "" }
+        ]);
 
-            w2ui['gridD2'].add([
-                        { recid: 0, name: 'Tennat ID' },
-                        { recid: 1, name: 'LegalName' },
-                        { recid: 2, name: 'Sales Category Code' },
-                        { recid: 3, name: 'Sales Category Description' },
-                        { recid: 4, name: 'Lease Start Date' },
-                        { recid: 5, name: 'Lease End Date' },
-                        { recid: 6, name: 'Charge Amount' },
-                        { recid: 7, name: 'Charge Frequency' },
-                        { recid: 8, name: 'Charge Frequency Description' }
-            ]);
+        w2ui['gridD2'].add([
+                    { recid: 0, name: 'Tennat ID' },
+                    { recid: 1, name: 'LegalName' },
+                    { recid: 2, name: 'Sales Category Code' },
+                    { recid: 3, name: 'Sales Category Description' },
+                    { recid: 4, name: 'Lease Start Date' },
+                    { recid: 5, name: 'Lease End Date' },
+                    { recid: 6, name: 'Charge Amount' },
+                    { recid: 7, name: 'Charge Frequency' },
+                    { recid: 8, name: 'Charge Frequency Description' }
+        ]);
 
-        });
+           });
+
+
     }
 
 
