@@ -1,0 +1,32 @@
+{"data":
+[
+["1-0010","DPT","Department Store","01/01/90","12/31/50","NLA","2328.60"],
+["1-0020","SSP","Small Shop","01/01/90","12/31/50","NLA","144.00"],
+["1-0030","SSP","Small Shop","01/01/90","12/31/50","NLA","150.00"],
+["1-0040","SSP","Small Shop","01/01/90","12/31/50","NLA","50.76"],
+["1-0050","SSP","Small Shop","01/01/90","12/31/50","NLA","53.00"],
+["1-0060","MNA","Mini Anchor","01/01/90","12/31/50","NLA","1091.00"],
+["1-0070","MSU","Medium Size Shop","01/01/90","12/31/50","NLA","329.34"],
+["1-0080","SSP","Small Shop","01/01/90","12/31/50","NLA","204.00"],
+["1-0090","FBR","F&B - Restaurant","01/01/90","12/31/50","NLA","160.00"],
+["1-0100","FFC","F&B - Food Court","01/01/90","12/31/50","NLA","96.00"],
+["1-0130","SSP","Small Shop","01/01/90","12/31/50","NLA","42.00"],
+["1-0140","SSP","Small Shop","01/01/90","12/31/50","NLA","92.00"],
+["1-0150","SSP","Small Shop","01/01/90","12/31/50","NLA","87.00"],
+["1-0160","SSP","Small Shop","01/01/90","12/31/50","NLA","79.00"],
+["1-0170","FBR","F&B - Restaurant","01/01/90","12/31/50","NLA","89.00"],
+["1-BOH01","BOH","Back of House","01/01/90","12/31/50","GFA","18.00"],
+["1-BOH02","BOH","Back of House","01/01/90","12/31/50","GFA","18.00"],
+["1-BOH03","BOH","Back of House","01/01/90","12/31/50","GFA","22.00"],
+["1-COM","COM","Common Area","01/01/90","12/31/50","GFA","616.46"],
+["1-CVT01","CVT","Common Area Vertical Transportation","01/01/90","12/31/50","GFA","8.00"],
+["1-CVT02","CVT","Common Area Vertical Transportation","01/01/90","12/31/50","GFA","26.00"],
+["1-CVT03","CVT","Common Area Vertical Transportation","01/01/90","12/31/50","GFA","21.00"],
+["1-CVT04","CVT","Common Area Vertical Transportation","01/01/90","12/31/50","GFA","21.00"],
+["1-CVT05","CVT","Common Area Vertical Transportation","01/01/90","12/31/50","GFA","10.00"],
+["1-CVT06","CVT","Common Area Vertical Transportation","01/01/90","12/31/50","GFA","21.00"],
+["1-CVT07","CVT","Common Area Vertical Transportation","01/01/90","12/31/50","GFA","21.00"],
+["1-MEP01","MEP","Mechanical Electrical Plumbing","01/01/90","12/31/50","GFA","14.00"],
+["1-MEP02","MEP","Mechanical Electrical Plumbing","01/01/90","12/31/50","GFA","22.00"]
+]
+}
