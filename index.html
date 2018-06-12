@@ -12,19 +12,21 @@
 </body>
 <script>
 
-  //  var Bmob = require('libs/Bmob-1.4.2.min.js');
+    //  var Bmob = require('libs/Bmob-1.4.2.min.js');
 
-   // 初始化
+    // 初始化
     Bmob.initialize("2465744a3e089f92acc7d6a25e4b7c85", "f2ab910ec0789f63f9cb1aba5fb00b35");
 
 
+
     var jsonArray = [];
+    var selectUnit = "";
 
     $(function () {
 
         var unit = Bmob.Object.extend("unit");
         var query = new Bmob.Query(unit);
-         jsonArray = [];
+        jsonArray = [];
         //  var query = Bmob.Query('unit');
         query.find({
             success: function (results) {
@@ -67,7 +69,7 @@
             ]
         });
 
-      //  w2ui['myGrid'].add({ "recid": "11", "UPNo": "SJM", "FNo": "01", "UNo": "100", "UnitType": "RT", "UnitTypeDesc": "Retail", "UnitStartDate": "01/01/18", "UnitEndDate": "12/31/55", "AreaType": "GFA", "AreaTypeDesc": "Gross Floor Area", "UnitArea": "990.00" })
+        //  w2ui['myGrid'].add({ "recid": "11", "UPNo": "SJM", "FNo": "01", "UNo": "100", "UnitType": "RT", "UnitTypeDesc": "Retail", "UnitStartDate": "01/01/18", "UnitEndDate": "12/31/55", "AreaType": "GFA", "AreaTypeDesc": "Gross Floor Area", "UnitArea": "990.00" })
 
         // set new content
         //   w2ui['myLayout'].content('main', 'HTML content');
@@ -95,7 +97,7 @@
             ],
             onClick: function (event) {
                 console.info(event.target);
-           //     loadBlock(event.target);
+                //     loadBlock(event.target);
 
             }
         }));
@@ -112,23 +114,13 @@
                 onClick: function (event) {
                     console.log('item ' + event.target + ' is clicked.');
                     showOccupancy();
-        }
+                }
             },
             { type: 'spacer' },
             {
-                type: 'check', id: 'item5', caption: 'Show Detail', icon: 'fa-home',
+                type: 'button', id: 'showDetail', text: 'Show Detail', img: 'icon-page', disabled: true, style: "padding: 4px; border: 1px solid #dfdfdf; border-radius: 3px",
                 onClick: function (event) {
-                    //  $('#popup1').w2popup('open');
-                    /*
-                    w2popup.clear();
-                    w2popup.load({
-                        url: 'detail.html',
-                        showMax: true,
-                        width: 800,
-                        height: 600,
-                        onClose: function (event) { console.info("清除"); w2popup.clear(); },
-                    })
-                    */
+ 
                     popupFunction();
                 }
             }
@@ -146,6 +138,7 @@
             { field: 'UNo', caption: 'Unit Number', size: '30%' },
             { field: 'UnitType', caption: 'Unit Type', size: '30%' },
             { field: 'UnitArea', caption: 'Unit Area', size: '40%' },
+            { field: 'UnitArea', caption: 'Unit Area', size: '40%' }
         ],
         records: jsonArray,
         onClick: function (event) {
@@ -153,6 +146,9 @@
             var record = this.get(event.recid);
             console.log(record.UNo);
             selectFeatureByID(record.UNo);
+            //使详细按钮可用
+            w2ui['toolbar'].enable('showDetail');
+            selectUnit = record.UNo;
         }
     });
 
@@ -186,7 +182,7 @@
             //    var object = results[i];
             //    console.info(results[i].attributes);
             //        alert(object.id + ' - ' + object.get('playerName'));
-       //     jsonArray[i] = results[i].attributes;
+            //     jsonArray[i] = results[i].attributes;
             console.info(jsonArray[i]["UNo"]);
             if (jsonArray[i]["UNo"] == "152") {
                 jsonArray[i]["w2ui"] = { "style": "background-color: rgba(0, 0 , 255, 0.5)" };
@@ -233,108 +229,130 @@
             }
         });
 
-            $(function () {
+        $(function () {
 
-        var pstyle = 'border: 1px solid #dfdfdf; padding: 5px;';
-        if (!(w2ui['detailLayout'])) {
-            $('#detailLayout').w2layout({
-                name: 'detailLayout',
-                panels: [
-                    { type: 'top', size: 200, style: pstyle, content: 'top' },
-                    { type: 'left', size: 300, style: pstyle, content: 'left' },
-                    { type: 'main', style: pstyle, content: 'main' }
-                ]
-            });
-        }
+            var pstyle = 'border: 1px solid #dfdfdf; padding: 5px;';
+            if (!(w2ui['detailLayout'])) {
+                $('#detailLayout').w2layout({
+                    name: 'detailLayout',
+                    panels: [
+                        { type: 'top', size: 200, style: pstyle, content: 'top' },
+                        { type: 'left', size: 300, style: pstyle, content: 'left' },
+                        { type: 'main', style: pstyle, content: 'main' }
+                    ]
+                });
+            }
 
-        if (!(w2ui['gridD0'])) {
-            $('#gridD0').w2grid({
-                name: 'gridD0',
-                header: 'Detail',
-                show: { header: true },
-                columns: [
-                    { field: 'UPNo', caption: 'Property Code', size: '100px', sortable: true, attr: 'align=center' },
-                    { field: 'FNo', caption: 'Floor Number', size: '30%', sortable: true },
-                    { field: 'UNo', caption: 'Unit Code', size: '40%' },
-                    { field: 'ULNo', caption: 'Lease Number', size: '120px' },
-                    { field: 'LeaseStartDate', caption: 'Lease Start Date', size: '120px' },
-                    { field: 'LeaseEndDate', caption: 'Lease End Date', size: '120px' }
-                ],
-                records: [
-                    { recid: 1, UPNo: 'SJM', FNo: 'doe', UNo: '201', ULNo: '10001', LeaseStartDate: '2019/1/1', LeaseEndDate: '2021/12/31' },
+            if (!(w2ui['gridD0'])) {
+                $('#gridD0').w2grid({
+                    name: 'gridD0',
+                    header: 'Detail',
+                    show: { header: true },
+                    columns: [
+                        { field: 'UPNo', caption: 'Property Code', size: '100px', sortable: true, attr: 'align=center' },
+                        { field: 'FNo', caption: 'Floor Number', size: '30%', sortable: true },
+                        { field: 'UNo', caption: 'Unit Code', size: '40%' },
+                        { field: 'ULNo', caption: 'Lease Number', size: '120px' },
+                        { field: 'LeaseStartDate', caption: 'Lease Start Date', size: '120px' },
+                        { field: 'LeaseEndDate', caption: 'Lease End Date', size: '120px' }
+                    ],
+                    onClick: function (event) {
+                        w2ui['gridD2'].clear();
+                        var record = this.get(event.recid);
+                        w2ui['gridD2'].add([
+                            { recid: 0, name: 'Tennat ID', value: 'T10011' },
+                            { recid: 1, name: 'LegalName', value: 'NIKE' },
+                            { recid: 2, name: 'Sales Category Code', value: 'Fas' },
+                            { recid: 3, name: 'Sales Category Description', value: 'Fasion' },
+                            { recid: 4, name: 'Lease Start Date', value: '01/01/19' },
+                            { recid: 5, name: 'Lease End Date', value: '12/31/21' },
+                            { recid: 6, name: 'Charge Amount', value: '$500000' },
+                            { recid: 7, name: 'Charge Frequency', value: 'M' },
+                            { recid: 8, name: 'Charge Frequency Description', value: 'Monthly' }
+                        ]);
 
-                ],
-                onClick: function (event) {
-                    w2ui['gridD2'].clear();
-                    var record = this.get(event.recid);
-                    w2ui['gridD2'].add([
-                        { recid: 0, name: 'Tennat ID', value: 'T10011' },
-                        { recid: 1, name: 'LegalName', value: 'NIKE' },
-                        { recid: 2, name: 'Sales Category Code', value: 'Fas' },
-                        { recid: 3, name: 'Sales Category Description', value: 'Fasion' },
-                        { recid: 4, name: 'Lease Start Date', value: '01/01/19' },
-                        { recid: 5, name: 'Lease End Date', value: '12/31/21' },
-                        { recid: 6, name: 'Charge Amount', value: '$500000' },
-                        { recid: 7, name: 'Charge Frequency', value: 'M' },
-                        { recid: 8, name: 'Charge Frequency Description', value: 'Monthly' }
-                    ]);
+                        w2ui['gridD1'].clear();
+                        var record = this.get(event.recid);
+                        w2ui['gridD1'].add([
+                            { recid: 0, name: 'Property Code', value: 'SJM' },
+                            { recid: 1, name: 'Property Name', value: 'SJM' },
+                            { recid: 2, name: 'Country', value: 'China' },
+                            { recid: 3, name: 'City', value: 'Macau' },
+                            { recid: 4, name: 'Address', value: "" }
+                        ]);
 
-                    w2ui['gridD1'].clear();
-                    var record = this.get(event.recid);
-                    w2ui['gridD1'].add([
-                        { recid: 0, name: 'Property Code', value: 'SJM' },
-                        { recid: 1, name: 'Property Name', value: 'SJM' },
-                        { recid: 2, name: 'Country', value: 'China' },
-                        { recid: 3, name: 'City', value: 'Macau' },
-                        { recid: 4, name: 'Address', value: "" }
-                    ]);
+                    }
+                });
 
+                $('#gridD2').w2grid({
+                    header: '',
+                    show: { header: true, columnHeaders: false },
+                    name: 'gridD2',
+                    columns: [
+                        { field: 'name', caption: 'Name', size: '100px', style: 'background-color: #efefef; border-bottom: 1px solid white; padding-right: 5px;', attr: "align=right" },
+                        { field: 'value', caption: 'Value', size: '100%' }
+                    ]
+                });
+
+
+                $('#gridD1').w2grid({
+                    header: '',
+                    show: { header: true, columnHeaders: false },
+                    name: 'gridD1',
+                    columns: [
+                        { field: 'name', caption: 'Name', size: '200px', style: 'background-color: #efefef; border-bottom: 1px solid white; padding-right: 5px;', attr: "align=left" },
+                        { field: 'value', caption: 'Value', size: '100%' }
+                    ]
+                });
+            }
+
+            //取得所有租约
+            var leases = Bmob.Object.extend("leases");
+            var query = new Bmob.Query(leases);
+            query.equalTo("UNo", selectUnit);
+            //  var query = Bmob.Query('unit');
+            query.find({
+                success: function (results) {
+                    //  console.info(results);
+                    //    alert("共查询到 " + results.length + " 条记录");
+                    // 循环处理查询到的数据
+                    for (var i = 0; i < results.length; i++) {
+                        var object = results[i];
+                        console.info(results[i].attributes);
+                        //        alert(object.id + ' - ' + object.get('playerName'));
+                        jsonArray[i] = results[i].attributes;
+                        console.info(jsonArray[i]["AreaType"]);
+                        //     jsonArray[i]["w2ui"] = { "style": "background-color: #98F5FF" };
+                        w2ui['gridD0'].add(results[i].attributes);
+                    }
+                },
+                error: function (error) {
+                    alert("查询失败: " + error.code + " " + error.message);
                 }
             });
 
-            $('#gridD2').w2grid({
-                header: '',
-                show: { header: true, columnHeaders: false },
-                name: 'gridD2',
-                columns: [
-                    { field: 'name', caption: 'Name', size: '100px', style: 'background-color: #efefef; border-bottom: 1px solid white; padding-right: 5px;', attr: "align=right" },
-                    { field: 'value', caption: 'Value', size: '100%' }
-                ]
-            });
 
+            w2ui['gridD1'].add([
+                { recid: 0, name: 'Property Code', value: '' },
+                { recid: 1, name: 'Property Name', value: '' },
+                { recid: 2, name: 'Country:', value: '' },
+                { recid: 3, name: 'City', value: '' },
+                { recid: 4, name: 'Address', value: "" }
+            ]);
 
-            $('#gridD1').w2grid({
-                header: '',
-                show: { header: true, columnHeaders: false },
-                name: 'gridD1',
-                columns: [
-                    { field: 'name', caption: 'Name', size: '200px', style: 'background-color: #efefef; border-bottom: 1px solid white; padding-right: 5px;', attr: "align=left" },
-                    { field: 'value', caption: 'Value', size: '100%' }
-                ]
-            });
-        }
+            w2ui['gridD2'].add([
+                        { recid: 0, name: 'Tennat ID' },
+                        { recid: 1, name: 'LegalName' },
+                        { recid: 2, name: 'Sales Category Code' },
+                        { recid: 3, name: 'Sales Category Description' },
+                        { recid: 4, name: 'Lease Start Date' },
+                        { recid: 5, name: 'Lease End Date' },
+                        { recid: 6, name: 'Charge Amount' },
+                        { recid: 7, name: 'Charge Frequency' },
+                        { recid: 8, name: 'Charge Frequency Description' }
+            ]);
 
-        w2ui['gridD1'].add([
-            { recid: 0, name: 'Property Code', value: '' },
-            { recid: 1, name: 'Property Name', value: '' },
-            { recid: 2, name: 'Country:', value: '' },
-            { recid: 3, name: 'City', value: '' },
-            { recid: 4, name: 'Address', value: "" }
-        ]);
-
-        w2ui['gridD2'].add([
-                    { recid: 0, name: 'Tennat ID' },
-                    { recid: 1, name: 'LegalName' },
-                    { recid: 2, name: 'Sales Category Code' },
-                    { recid: 3, name: 'Sales Category Description' },
-                    { recid: 4, name: 'Lease Start Date' },
-                    { recid: 5, name: 'Lease End Date' },
-                    { recid: 6, name: 'Charge Amount' },
-                    { recid: 7, name: 'Charge Frequency' },
-                    { recid: 8, name: 'Charge Frequency Description' }
-        ]);
-
-           });
+        });
 
 
     }
@@ -347,3 +365,16 @@
 
 </script>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+

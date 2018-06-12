@@ -11,6 +11,7 @@
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL,fetch"></script>
     <script type="text/javascript" src="lib/jquery.min.js"></script>
   
+    <script type="text/javascript" src="libs/w2ui/w2ui-1.5.rc1.min.js"></script>
     <style>
          #map{
             width:100%;
@@ -108,7 +109,7 @@
                 })
             })]
         };
- /*开始专题图样式*/
+        /*开始专题图样式*/
         /**
  * 创建文本样式函数
  * @param {ol.Feature} feature 要素
@@ -164,9 +165,9 @@
         var layerStyleFunction = function (feature, resolution) {
             var id = feature.get('id');
             var style = null;
-           
 
-            if (id <0) {
+
+            if (id < 0) {
                 style = new ol.style.Style({
                     stroke: new ol.style.Stroke({  //区的边界样式
                         color: 'black',
@@ -175,57 +176,7 @@
                     fill: new ol.style.Fill({  //区的填充样式
                         color: 'rgba(255, 255, 255, 1)'
                     })
-                 
-                });
-            }
-            else if (id == 0) {
-                 style = new ol.style.Style({
-                    stroke: new ol.style.Stroke({  //区的边界样式
-                        color: '#black',
-                        width: 0.5
-                    }),
-                        fill: new ol.style.Fill({  //区的填充样式
-                            color: 'rgba(220, 220 ,220, 1)'
-                    })
-                });
-            }
-           else { // 其他形状
-                style = new ol.style.Style({
-                    stroke: new ol.style.Stroke({  //区的边界样式
-                        color: 'black',
-                        width: 0.5
-                    }),
-                    fill: new ol.style.Fill({  //区的填充样式
-                        color: 'rgba(152, 245, 255, 0.5)'
-                    }),
-                    text: createTextStyle(feature)
-                });
-            }
 
-   
-
-          
-
-            // 返回 style 数组
-            return [style];
-        };
-
-        // 创建layer使用的style function，根据feature的自定义type，返回不同的样式
-        var oLayerStyleFunction = function (feature, resolution) {
-            var id = feature.get('id');
-            var style = null;
-           
-
-            if (id <0) {
-                style = new ol.style.Style({
-                    stroke: new ol.style.Stroke({  //区的边界样式
-                        color: 'black',
-                        width: 0.5
-                    }),
-                    fill: new ol.style.Fill({  //区的填充样式
-                        color: 'rgba(255, 255, 255, 1)'
-                    })
-                 
                 });
             }
             else if (id == 0) {
@@ -239,7 +190,57 @@
                     })
                 });
             }
-            else if (id ==152){ // 其他形状
+            else { // 其他形状
+                style = new ol.style.Style({
+                    stroke: new ol.style.Stroke({  //区的边界样式
+                        color: 'black',
+                        width: 0.5
+                    }),
+                    fill: new ol.style.Fill({  //区的填充样式
+                        color: 'rgba(152, 245, 255, 0.5)'
+                    }),
+                    text: createTextStyle(feature)
+                });
+            }
+
+
+
+
+
+            // 返回 style 数组
+            return [style];
+        };
+
+        // 创建layer使用的style function，根据feature的自定义type，返回不同的样式
+        var oLayerStyleFunction = function (feature, resolution) {
+            var id = feature.get('id');
+            var style = null;
+
+
+            if (id < 0) {
+                style = new ol.style.Style({
+                    stroke: new ol.style.Stroke({  //区的边界样式
+                        color: 'black',
+                        width: 0.5
+                    }),
+                    fill: new ol.style.Fill({  //区的填充样式
+                        color: 'rgba(255, 255, 255, 1)'
+                    })
+
+                });
+            }
+            else if (id == 0) {
+                style = new ol.style.Style({
+                    stroke: new ol.style.Stroke({  //区的边界样式
+                        color: '#black',
+                        width: 0.5
+                    }),
+                    fill: new ol.style.Fill({  //区的填充样式
+                        color: 'rgba(220, 220 ,220, 1)'
+                    })
+                });
+            }
+            else if (id == 152) { // 其他形状
                 style = new ol.style.Style({
                     stroke: new ol.style.Stroke({  //区的边界样式
                         color: 'black',
@@ -251,7 +252,7 @@
                     text: createTextStyle(feature)
                 });
             }
-            else if (id ==201){ // 其他形状
+            else if (id == 201) { // 其他形状
                 style = new ol.style.Style({
                     stroke: new ol.style.Stroke({  //区的边界样式
                         color: 'black',
@@ -345,31 +346,30 @@
                 //   var hit = map.hasFeatureAtPixel(pixel);
                 if (event.selected[0] != null) {
                     //      myMap.selectClick.getFeatures().clear();
-  
-
-                        console.info(event.selected[0]);
-                        var a = event.selected[0].getGeometry().getCoordinates();
 
 
+                    console.info(event.selected[0]);
+                    var a = event.selected[0].getGeometry().getCoordinates();
 
-                        console.info(a);
-                        var polygon = turf.polygon(a);
-                        var pt = turf.toWgs84(polygon);
+
+
+                    console.info(a);
+                    var polygon = turf.polygon(a);
+                    var pt = turf.toWgs84(polygon);
                     //       myMap.zoomToFeature(pt.geometry.coordinates);
-                    /*
-                        w2popup.load({
-                            url: 'detail.html',
-                            showMax: true,
-                            width: 800,
-                            height: 600,
-                            onClose: function (event) { console.info("清除"); w2popup.clear(); },
-                        })
-                  */  
+                    w2popup.load({
+                        url: 'detail.html',
+                        showMax: true,
+                        width: 800,
+                        height: 600,
+                        onClose: function (event) { console.info("清除"); w2popup.clear(); },
+                    })
+
                 }
             });
         }
 
-      //  clickZoom();
+        //  clickZoom();
 
         //地块提示
         function startHint() {
@@ -425,11 +425,11 @@
 
             if (this.getZoom() >= 20) {
                 myMap.unOsmLayer();
-              //  myMap.switchMap(5);
+                //  myMap.switchMap(5);
             }
             else {
                 myMap.onOsmLayer();
-             //   myMap.switchMap(4);
+                //   myMap.switchMap(4);
             }
         })
 
