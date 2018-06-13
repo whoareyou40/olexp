@@ -116,17 +116,40 @@
                     showOccupancy();
                 }
             },
-            { type: 'spacer' },
             {
                 type: 'button', id: 'showDetail', text: 'Show Detail', img: 'icon-page', disabled: true, style: "padding: 4px; border: 1px solid #dfdfdf; border-radius: 3px",
                 onClick: function (event) {
  
                     popupFunction();
                 }
-            }
+            },
+           { type: 'html',  id: 'item5',
+                            html: function (item) {
+                                var html =
+                                  '<div id="form" style="width: 750px;">' +
+                                   '<input name="dob" type="us-date">' +
+                                    '</div>';
+                                return html;
+                            }
+                        }
+           
         ]
     });
-
+    $('#form').w2form({
+        name: 'form',
+        url: 'server/post',
+        fields: [
+            { field: 'dob', type: 'date' },
+        ],
+        actions: {
+            reset: function () {
+                this.clear();
+            },
+            save: function () {
+                this.save();
+            }
+        }
+    });
 
     //右数据菜单
     $('#myGrid').w2grid({
@@ -260,25 +283,25 @@
                         w2ui['gridD2'].clear();
                         var record = this.get(event.recid);
                         w2ui['gridD2'].add([
-                            { recid: 0, name: 'Tennat ID', value: 'T10011' },
-                            { recid: 1, name: 'LegalName', value: 'NIKE' },
-                            { recid: 2, name: 'Sales Category Code', value: 'Fas' },
-                            { recid: 3, name: 'Sales Category Description', value: 'Fasion' },
-                            { recid: 4, name: 'Lease Start Date', value: '01/01/19' },
-                            { recid: 5, name: 'Lease End Date', value: '12/31/21' },
-                            { recid: 6, name: 'Charge Amount', value: '$500000' },
-                            { recid: 7, name: 'Charge Frequency', value: 'M' },
-                            { recid: 8, name: 'Charge Frequency Description', value: 'Monthly' }
+                            { recid: 0, name: 'Tennat ID', value: record.TenantID },
+                            { recid: 1, name: 'LegalName', value: record.LegalName },
+                            { recid: 2, name: 'Sales Category Code', value: record.SalesCategoryCode },
+                            { recid: 3, name: 'Sales Category Description', value: record.SalesCategoryDesc },
+                            { recid: 4, name: 'Lease Start Date', value: record.LeaseStartDate.substring(0,10) },
+                            { recid: 5, name: 'Lease End Date', value: record.LeaseEndDate.substring(0, 10) },
+                            { recid: 6, name: 'Charge Amount', value: record.ChargeAmount },
+                            { recid: 7, name: 'Charge Frequency', value: record.ChargeFrequency },
+                            { recid: 8, name: 'Charge Frequency Description', value: record.ChargeFrequencyDescription }
                         ]);
 
                         w2ui['gridD1'].clear();
                         var record = this.get(event.recid);
                         w2ui['gridD1'].add([
-                            { recid: 0, name: 'Property Code', value: 'SJM' },
-                            { recid: 1, name: 'Property Name', value: 'SJM' },
-                            { recid: 2, name: 'Country', value: 'China' },
-                            { recid: 3, name: 'City', value: 'Macau' },
-                            { recid: 4, name: 'Address', value: "" }
+                            { recid: 0, name: 'Property Code', value: record.GroupingValue },
+                            { recid: 1, name: 'Property Name', value: record.GroupingType },
+                            { recid: 2, name: 'Country', value: record.Country },
+                            { recid: 3, name: 'City', value: record.City },
+                            { recid: 4, name: 'Address', value: record.Address }
                         ]);
 
                     }
@@ -289,7 +312,7 @@
                     show: { header: true, columnHeaders: false },
                     name: 'gridD2',
                     columns: [
-                        { field: 'name', caption: 'Name', size: '100px', style: 'background-color: #efefef; border-bottom: 1px solid white; padding-right: 5px;', attr: "align=right" },
+                        { field: 'name', caption: 'Name', size: '200px', style: 'background-color: #efefef; border-bottom: 1px solid white; padding-right: 5px;', attr: "align=right" },
                         { field: 'value', caption: 'Value', size: '100%' }
                     ]
                 });
@@ -307,10 +330,11 @@
             }
 
             //取得所有租约
-            var leases = Bmob.Object.extend("leases");
+            var leases = Bmob.Object.extend("full");
             var query = new Bmob.Query(leases);
             query.equalTo("UNo", selectUnit);
             //  var query = Bmob.Query('unit');
+            query.limit(1);
             query.find({
                 success: function (results) {
                     //  console.info(results);
@@ -321,9 +345,10 @@
                         console.info(results[i].attributes);
                         //        alert(object.id + ' - ' + object.get('playerName'));
                         jsonArray[i] = results[i].attributes;
-                        console.info(jsonArray[i]["AreaType"]);
+                        jsonArray[i]["LeaseStartDate"] = jsonArray[i]["LeaseStartDate"].substring(0, 10);
+                        jsonArray[i]["LeaseEndDate"] = jsonArray[i]["LeaseEndDate"].substring(0, 10);
                         //     jsonArray[i]["w2ui"] = { "style": "background-color: #98F5FF" };
-                        w2ui['gridD0'].add(results[i].attributes);
+                        w2ui['gridD0'].add(jsonArray[i]);
                     }
                 },
                 error: function (error) {
