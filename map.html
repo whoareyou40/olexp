@@ -384,26 +384,29 @@
                         function (feature, layer) {
                             return feature;
                         });
-                    //如果当前存在热区要素    
+                    //如果当前存在热区要素   
+                 //   console.info(feature);
                     if (feature) {
                         if (feature.get('id') <= 0) {
                             popup.style.display = "none"; //销毁popup
                         }
                         else {
-                            //  console.info(feature);
+                         console.info(feature);
                             var geo = feature.getGeometry(); //获取要素的几何信息
                             var coordinates = geo.getCoordinates(); //获取几何坐标
                             //       console.info(coordinates);
+                            /*
                             var polygon = turf.polygon(coordinates);//将几何坐标拼接为字符串
                             var pt = turf.toWgs84(polygon);
                             var area = turf.area(pt);
                             //    alert("绘制的面积是：" + area);
-
+                           
                             area = area.toFixed(2);
+                              */
                             popup.style.display = ""
                             var coordinate = evt.coordinate;
-
-                            content.innerHTML = '<p>id:' + feature.get('id') + '</p>' + '<p>Area：' + area + ' SQM</p>';
+                            
+                            content.innerHTML = '<p>id:' + feature.get('id') + '</p>' + '<p>Area：' + feature.get('area') + ' Sqft</p>';
                             overlay.setPosition(coordinate);
                         }
                     }

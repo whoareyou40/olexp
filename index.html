@@ -8,6 +8,7 @@
   
 </head>
 <body>
+    <div><font size="2" >As of date</font><input type="us-date" id ="datepicker"></div>
     <div id="myLayout" style="height:800px;width:100%"></div>
 </body>
 <script>
@@ -54,7 +55,7 @@
         var myLayout = $('#myLayout').w2layout({
             name: 'myLayout',
             panels: [
-                { type: 'top', size: 30 },
+                { type: 'top', size: 50 },
                 { type: 'left', size: 200, resizable: false },
                 { type: 'right', size: 300, resizable: false },
                 { type: 'main', content: 'main', style: pstyle }
@@ -68,21 +69,46 @@
                 { type: 'main', content: 'main', style: pstyle }
             ]
         });
+        var leftLayout = $('#leftLayout').w2layout({
+            name: 'leftLayout',
+            panels: [
+                { type: 'top', size: 500 },
+                { type: 'main', content: 'main'}
+            ]
+        });
 
+        var topLayout = $('#topLayout').w2layout({
+            name: 'topLayout',
+            panels: [
+                { type: 'left', size: 600 },
+                { type: 'right', size: 300 }
+            ]
+        });
         //  w2ui['myGrid'].add({ "recid": "11", "UPNo": "SJM", "FNo": "01", "UNo": "100", "UnitType": "RT", "UnitTypeDesc": "Retail", "UnitStartDate": "01/01/18", "UnitEndDate": "12/31/55", "AreaType": "GFA", "AreaTypeDesc": "Gross Floor Area", "UnitArea": "990.00" })
 
         // set new content
         //   w2ui['myLayout'].content('main', 'HTML content');
         // set content as an object
+
         w2ui['myLayout'].content('right', w2ui['rightLayout']);
-        w2ui['myLayout'].content('top', w2ui['toolbar']);
+        w2ui['myLayout'].content('left', w2ui['leftLayout']);
+
+        w2ui['myLayout'].content('top', w2ui['topLayout']);
+        //w2ui['myLayout'].content('top', w2ui['toolbar']);
 
         w2ui['rightLayout'].content('top', w2ui['myGrid']);
         w2ui['rightLayout'].content('main', w2ui['grid2']);
 
+        w2ui['leftLayout'].content('top', w2ui['leftSidebar']);
+        w2ui['leftLayout'].content('main', w2ui['leftForm']);
+
+        w2ui['topLayout'].content('left', w2ui['toolbar']);
+        w2ui['topLayout'].content('right', w2ui['leftForm']);
+
         w2ui['myLayout'].load('main', 'map.html');
 
         // then define the sidebar
+        /*
         w2ui['myLayout'].content('left', $().w2sidebar({
             name: 'sidebar',
             img: null,
@@ -100,12 +126,39 @@
                 //     loadBlock(event.target);
 
             }
-        }));
+        }));*/
+    });
+
+    $('#leftForm').w2form({
+        name: 'leftForm',
+        fields: [
+            { name: 'As of Date', type: 'date',focus:-1 }
+        ]
+    });
+
+    $('#leftSidebar').w2sidebar({
+        name: 'leftSidebar',
+        img: null,
+        nodes: [
+            {
+                id: 'Building1', text: 'SJM', img: 'icon-folder', expanded: true, group: true,
+                nodes: [{ id: '01', text: 'Floor 1', img: 'icon-page' },
+                         { id: '02', text: 'Floor 2', img: 'icon-page' },
+                         { id: '03', text: 'Floor 3', img: 'icon-page' }
+                ]
+            }
+        ],
+        onClick: function (event) {
+            console.info(event.target);
+            //     loadBlock(event.target);
+
+        }
     });
 
     //菜单栏
     $('#toolbar').w2toolbar({
         name: 'toolbar',
+        width:600,
         items: [
 
             { type: 'break', id: 'break0' },
@@ -123,33 +176,32 @@
                     popupFunction();
                 }
             },
+                        {
+                            type: 'button', id: 'date', text: 'As of Date', img: 'icon-page',  style: "padding: 4px; border: 1px solid #dfdfdf; border-radius: 3px",
+                            onClick: function (event) {
+ 
+                                w2popup.open({
+                                    title: 'Popup Title',
+                                    body: '<div class="w2ui-centered"><input name="dob" type="us-date"></div>'
+                                });
+                            }
+                        },
+
            { type: 'html',  id: 'item5',
                             html: function (item) {
                                 var html =
-                                  '<div id="form" style="width: 750px;">' +
-                                   '<input name="dob" type="us-date">' +
-                                    '</div>';
+                                   '<input id ="datepicker" name="us-date" type="us-date">';
+
                                 return html;
                             }
                         }
            
-        ]
-    });
-    $('#form').w2form({
-        name: 'form',
-        url: 'server/post',
-        fields: [
-            { field: 'dob', type: 'date' },
         ],
-        actions: {
-            reset: function () {
-                this.clear();
-            },
-            save: function () {
-                this.save();
-            }
+        onRender: function (event) {
+            $('input[type=us-date]').w2field('date');
         }
     });
+   // $("#datepicker").datepicker();
 
     //右数据菜单
     $('#myGrid').w2grid({
