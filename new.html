@@ -1,0 +1,748 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Map Viewer (3-column layout)</title>
+    <link rel="stylesheet" href="assets/css/ol.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="libs/w2ui/w2ui-1.5.rc1.min.css" />
+
+    <style type="text/css">
+        
+        #map{
+            width:100%;
+            height:100%;
+        }
+      .ol-popup {
+        position: absolute;
+        background-color: white;
+        -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+        filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #cccccc;
+        bottom: 12px;
+        left: -50px;
+        min-width: 280px;
+      }
+      .ol-popup:after, .ol-popup:before {
+        top: 100%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+      }
+      .ol-popup:after {
+        border-top-color: white;
+        border-width: 10px;
+        left: 48px;
+        margin-left: -10px;
+      }
+      .ol-popup:before {
+        border-top-color: #cccccc;
+        border-width: 11px;
+        left: 48px;
+        margin-left: -11px;
+      }
+      .ol-popup-closer {
+        text-decoration: none;
+        position: absolute;
+        top: 2px;
+        right: 8px;
+      }
+      .ol-popup-closer:after {
+        content: "✖";
+      }
+
+      body { overflow: hidden; }
+
+      .navbar-offset { margin-top: 50px; }
+      #map { position: absolute; top: 50px; bottom: 0px; left: 0px; right: 0px; }
+      #map .ol-zoom { font-size: 1.2em; }
+
+      .zoom-top-opened-sidebar { margin-top: 5px; }
+      .zoom-top-collapsed { margin-top: 45px; }
+
+      .mini-submenu{
+        display:none;  
+        background-color: rgba(255, 255, 255, 0.46);
+        border: 1px solid rgba(0, 0, 0, 0.9);
+        border-radius: 4px;
+        padding: 9px;  
+        /*position: relative;*/
+        width: 42px;
+        text-align: center;
+      }
+
+      .mini-submenu-left {
+        position: absolute;
+        top: 60px;
+        left: .5em;
+        z-index: 40;
+      }
+      .mini-submenu-right {
+        position: absolute;
+        top: 60px;
+        right: .5em;
+        z-index: 40;
+      }
+
+      #map { z-index: 35; }
+
+      .sidebar { z-index: 45; }
+
+      .main-row { position: relative; top: 0; }
+
+      .mini-submenu:hover{
+        cursor: pointer;
+      }
+
+      .slide-submenu{
+        background: rgba(0, 0, 0, 0.45);
+        display: inline-block;
+        padding: 0 8px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+    </style>
+    <script src="lib/turf.min.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL,fetch"></script>
+    <script src="lib/ol.js" type="text/javascript"></script>
+
+    <script src="libs/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="libs/bmob-min.js"></script>
+    <script type="text/javascript" src="libs/w2ui/w2ui-1.5.rc1.min.js"></script>
+
+    <script src="lib/viewer.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+
+      function applyMargins() {
+        var leftToggler = $(".mini-submenu-left");
+        var rightToggler = $(".mini-submenu-right");
+        if (leftToggler.is(":visible")) {
+          $("#map .ol-zoom")
+            .css("margin-left", 0)
+            .removeClass("zoom-top-opened-sidebar")
+            .addClass("zoom-top-collapsed");
+        } else {
+          $("#map .ol-zoom")
+            .css("margin-left", $(".sidebar-left").width())
+            .removeClass("zoom-top-opened-sidebar")
+            .removeClass("zoom-top-collapsed");
+        }
+        if (rightToggler.is(":visible")) {
+          $("#map .ol-rotate")
+            .css("margin-right", 0)
+            .removeClass("zoom-top-opened-sidebar")
+            .addClass("zoom-top-collapsed");
+        } else {
+          $("#map .ol-rotate")
+            .css("margin-right", $(".sidebar-right").width())
+            .removeClass("zoom-top-opened-sidebar")
+            .removeClass("zoom-top-collapsed");
+        }
+      }
+
+      function isConstrained() {
+        return $("div.mid").width() == $(window).width();
+      }
+
+      function applyInitialUIState() {
+        if (isConstrained()) {
+          $(".sidebar-left .sidebar-body").fadeOut('slide');
+          $(".sidebar-right .sidebar-body").fadeOut('slide');
+          $('.mini-submenu-left').fadeIn();
+          $('.mini-submenu-right').fadeIn();
+        }
+      }
+
+      $(function () {
+
+        $('.sidebar-left .slide-submenu').on('click',function() {
+          var thisEl = $(this);
+          thisEl.closest('.sidebar-body').fadeOut('slide',function(){
+            $('.mini-submenu-left').fadeIn();
+            applyMargins();
+          });
+        });
+
+        $('.mini-submenu-left').on('click',function() {
+          var thisEl = $(this);
+          $('.sidebar-left .sidebar-body').toggle('slide');
+          thisEl.hide();
+          applyMargins();
+        });
+
+        $('.sidebar-right .slide-submenu').on('click',function() {
+          var thisEl = $(this);
+          thisEl.closest('.sidebar-body').fadeOut('slide',function(){
+            $('.mini-submenu-right').fadeIn();
+            applyMargins();
+          });
+        });
+
+        $('.mini-submenu-right').on('click',function() {
+          var thisEl = $(this);
+          $('.sidebar-right .sidebar-body').toggle('slide');
+          thisEl.hide();
+          applyMargins();
+        });
+
+        $(window).on("resize", applyMargins);
+
+
+
+        
+
+
+
+        applyInitialUIState();
+        applyMargins();
+
+
+ 
+          ////
+
+      });
+
+
+    </script>
+
+     
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-fixed-top navbar-default" role="navigation">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">SJM GIS DEMO</a>
+          </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Floor</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Analysis <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="javascript:showOccupancy()">Occupancy</a></li>
+                  <li><a href="#">Sales category</a></li>
+                  <li><a href="#">Something else here</a></li>
+                  <li class="divider"></li>
+                  <li><a href="#">Separated link</a></li>
+                  <li class="divider"></li>
+                  <li><a href="#">One more separated link</a></li>
+                       
+                </ul>
+              </li>
+                    <li class="" > <form class="navbar-form navbar-left" role="search"><button id="showDetail" class="w2ui-btn" onclick="popupFunction()" disabled style="height:30px">Show Detail</button> </form></li>        
+            </ul>
+
+ 
+            <ul class="nav navbar-nav navbar-right">
+                     <form class="navbar-form navbar-left" role="search">As-of date
+              <div class="form-group">
+                  <input id="asofdate" type="us-date">
+              </div>
+              <button type="submit" class="btn btn-default">Set</button>
+            </form>
+
+            </ul>
+            </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+          </nav>
+        </div>
+      </nav>
+      <div class="navbar-offset"></div>
+      <div id="map" >
+       <div id="popup" class="ol-popup">
+      <!--a href="#" id="popup-closer" class="ol-popup-closer"></!--a-->
+      <div id="popup-content"></div>
+    </div>
+      </div>
+      <div class="row main-row">
+        <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
+          <div class="panel-group sidebar-body" id="accordion-left">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" href="#layers">
+                    <i class="fa fa-list-alt"></i>
+                    Layers
+                  </a>
+                  <span class="pull-right slide-submenu">
+                    <i class="fa fa-chevron-left"></i>
+                  </span>
+                </h4>
+              </div>
+              <div id="layers" class="panel-collapse collapse in">
+                <div class="panel-body list-group">
+                  <a href="#" class="list-group-item">
+                    <i class="fa fa-globe" ></i> Floor 1
+                  </a>
+                  <a href="#" class="list-group-item">
+                    <i class="fa fa-globe"></i> Floor 2
+                  </a>
+                  <a href="#" class="list-group-item">
+                    <i class="fa fa-globe"></i> Floor 3
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" href="#properties">
+                    <i class="fa fa-list-alt"></i>
+                    Properties
+                  </a>
+                </h4>
+              </div>
+              <div id="Ana" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div id="aGrid" style="width: 100%; height: 300px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 col-md-6 mid"></div>
+        <div class="col-sm-4 col-md-3 sidebar sidebar-right pull-right">
+          <div class="panel-group sidebar-body" id="accordion-right">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" href="#taskpane">
+                    <i class="fa fa-tasks"></i>
+                    Unit List
+                  </a>
+                  <span class="pull-right slide-submenu">
+                    <i class="fa fa-chevron-right"></i>
+                  </span>
+                </h4>
+              </div>
+              <div id="taskpane" class="panel-collapse collapse in">
+                <div class="panel-body">
+                  <div id="myGrid" style="width: 100%; height: 450px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mini-submenu mini-submenu-left pull-left">
+        <i class="fa fa-list-alt"></i>
+      </div>
+      <div class="mini-submenu mini-submenu-right pull-right">
+        <i class="fa fa-tasks"></i>
+      </div>
+    </div>
+  </body>
+        <script type="text/javascript">
+            Date.prototype.Format = function (fmt) { //author: meizz   
+                var o = {
+                    "M+": this.getMonth() + 1, //月份   
+                    "d+": this.getDate(), //日   
+                    "H+": this.getHours(), //小时   
+                    "m+": this.getMinutes(), //分   
+                    "s+": this.getSeconds(), //秒   
+                    "q+": Math.floor((this.getMonth() + 3) / 3), //季度   
+                    "S": this.getMilliseconds() //毫秒   
+                };
+                if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                for (var k in o)
+                    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                return fmt;
+            }
+
+            $('input[type=us-date]').w2field('date');
+            var month = (new Date()).getMonth() + 1;
+            var year = (new Date()).getFullYear();
+
+            var time2 = new Date().Format("M/d/yyyy");
+
+           // $(#asofdate)
+            $("#asofdate").val(time2);
+            ////地图模块
+            var myMap = new DMap();
+            //初始化地图
+            myMap.initMap();
+            var hintKey;
+            var container = document.getElementById('popup');
+            var content = document.getElementById('popup-content');
+            var closer = document.getElementById('popup-closer');
+            var overlay = new ol.Overlay({
+                element: container,
+                autoPan: false,
+                autoPanAnimation: {
+                    duration: 250
+                }
+            });
+            //增加弹出图层
+            map.addOverlay(overlay);
+            //vectorSource.addFeature(new ol.Feature(new ol.geom.Circle([5e6, 7e6], 1e6))); //添加单个几何要素
+            var view = new ol.View({
+                center: ol.proj.transform([113.57419204727863,
+                  22.144437606093415], 'EPSG:4326', 'EPSG:3857'),
+                zoom: 18
+            });
+            map.setView(view);
+            startHint();
+
+            //设置地块样式
+            var blockStyles = {
+                'Polygon': [new ol.style.Style({
+                    stroke: new ol.style.Stroke({  //区的边界样式
+                        color: '#0099ff',
+                        width: 1
+                    }),
+                    fill: new ol.style.Fill({  //区的填充样式
+                        color: 'rgba(255, 255, 255, 0.5)'
+                    })
+                })]
+            };
+            /*开始专题图样式*/
+            /**
+     * 创建文本样式函数
+     * @param {ol.Feature} feature 要素
+     * @param  dom 要素样式html对象
+     */
+            var createTypeTextStyle = function (feature) {
+
+
+                //返回实例化的文本样式对象（ol.style.Text）
+                return new ol.style.Text({
+                    font: '12px Calibri,sans-serif',
+                    overflow: 'line',
+                    text: feature.get("name"),
+                    fill: new ol.style.Fill({
+                        color: '#000'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: '#fff',
+                        width: 3
+                    })
+                })
+            };
+
+
+
+            /***结束专题图样式***/
+
+            /*开始正常模式样式*/
+            /**
+             * 创建文本样式函数
+             * @param {ol.Feature} feature 要素
+             * @param  dom 要素样式html对象
+             */
+            var createTextStyle = function (feature) {
+
+
+                //返回实例化的文本样式对象（ol.style.Text）
+                return new ol.style.Text({
+                    font: '12px Calibri,sans-serif',
+                    overflow: 'line',
+                    text: feature.get("id"),
+                    fill: new ol.style.Fill({
+                        color: '#000'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: '#fff',
+                        width: 3
+                    })
+                })
+            };
+
+            // 创建layer使用的style function，根据feature的自定义type，返回不同的样式
+            var layerStyleFunction = function (feature, resolution) {
+                var id = feature.get('id');
+                var style = null;
+
+
+                if (id < 0) {
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: 'black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(255, 255, 255, 1)'
+                        })
+
+                    });
+                }
+                else if (id == 0) {
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: '#black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(220, 220 ,220, 1)'
+                        })
+                    });
+                }
+                else { // 其他形状
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: 'black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(152, 245, 255, 0.5)'
+                        }),
+                        text: createTextStyle(feature)
+                    });
+                }
+
+
+
+
+
+                // 返回 style 数组
+                return [style];
+            };
+
+            // 创建layer使用的style function，根据feature的自定义type，返回不同的样式
+            var oLayerStyleFunction = function (feature, resolution) {
+                var id = feature.get('id');
+                var style = null;
+
+
+                if (id < 0) {
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: 'black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(255, 255, 255, 1)'
+                        })
+
+                    });
+                }
+                else if (id == 0) {
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: '#black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(220, 220 ,220, 1)'
+                        })
+                    });
+                }
+                else if (id == 152) { // 其他形状
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: 'black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(0, 0 , 255, 0.5)'
+                        }),
+                        text: createTextStyle(feature)
+                    });
+                }
+                else if (id == 201) { // 其他形状
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: 'black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(255, 0 , 0, 0.5)'
+                        }),
+                        text: createTextStyle(feature)
+                    });
+                }
+                else { // 其他形状
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: 'black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(255, 255 ,0, 0.5)'
+                        }),
+                        text: createTextStyle(feature)
+                    });
+                }
+
+                // 返回 style 数组
+                return [style];
+            };
+
+            /***结束专题图样式***/
+
+            var blockStyleFunction = function (feature, resolution) {
+                return blockStyles[feature.getGeometry().getType()]; //根据要素类型设置几何要素的样式
+            };
+            var vectorSource = new ol.source.Vector({
+                url: "geojson/floor1_4326.geojson",
+                format: new ol.format.GeoJSON()
+            });
+            var vectorLayer = new ol.layer.Vector({
+                source: vectorSource, //矢量数据源
+                style: layerStyleFunction,  //样式设置               
+            });
+            function loadBlock(fid) {
+                //增加地块
+                if (fid == "01") {
+                    map.addLayer(vectorLayer); //将矢量图层加载到地图中  
+                }
+                else {
+                    map.removeLayer(vectorLayer);
+                }
+            }
+
+            loadBlock("01");
+            //根据id选择地块
+            function selectFeatureByID(UNo) {
+
+
+                var features = vectorLayer.getSource().getFeatures();
+                console.info(features);
+                for (var i = 0; i < features.length; i++) {
+                    var feature = features[i];
+                    //   console.info(feature);
+
+
+                    if (feature.get('id') == UNo) {
+                        var coordinates = feature.getGeometry().getCoordinates();
+                        var polygon = turf.polygon(coordinates);//将坐标转换为多边形对象
+                        var pt = turf.toWgs84(polygon);
+                        console.info(pt.geometry.coordinates);
+                        myMap.zoomToFeature(pt.geometry.coordinates);
+                    }
+
+
+                }
+
+            };
+            //取消高亮
+            function cleanHighlight() {
+                myMap.cleanHighlightPolygon();
+            }
+
+            function stopHint() {
+                map.unByKey(hintKey);
+            }
+
+            //点击跳转
+            function clickZoom() {
+                myMap.selectFeature();
+                //选择多边形事件
+                myMap.selectClick.on('select', function (event) {
+                    //  var pixel = map.getEventPixel(event.originalEvent);
+                    //   var hit = map.hasFeatureAtPixel(pixel);
+                    if (event.selected[0] != null) {
+                        //      myMap.selectClick.getFeatures().clear();
+
+
+                        console.info(event.selected[0]);
+                        var a = event.selected[0].getGeometry().getCoordinates();
+
+
+
+                        console.info(a);
+                        var polygon = turf.polygon(a);
+                        var pt = turf.toWgs84(polygon);
+                        //       myMap.zoomToFeature(pt.geometry.coordinates);
+                        w2popup.load({
+                            url: 'detail.html',
+                            showMax: true,
+                            width: 800,
+                            height: 600,
+                            onClose: function (event) { console.info("清除"); w2popup.clear(); },
+                        })
+
+                    }
+                });
+            }
+
+            //  clickZoom();
+
+            //地块提示
+            function startHint() {
+                stopHint();
+                hintKey = map.on('pointermove', function (evt) {
+                    var pixel = map.getEventPixel(evt.originalEvent);
+                    var hit = map.hasFeatureAtPixel(pixel);
+                    map.getTargetElement().style.cursor = hit ? 'pointer' : '';//改变鼠标光标状态
+                    if (hit) {
+                        //当前鼠标位置选中要素
+                        var feature = map.forEachFeatureAtPixel(evt.pixel,
+                            function (feature, layer) {
+                                return feature;
+                            });
+                        //如果当前存在热区要素   
+                        //   console.info(feature);
+                        if (feature) {
+                            if (feature.get('id') <= 0) {
+                                popup.style.display = "none"; //销毁popup
+                            }
+                            else {
+                                console.info(feature);
+                                var geo = feature.getGeometry(); //获取要素的几何信息
+                                var coordinates = geo.getCoordinates(); //获取几何坐标
+                                //       console.info(coordinates);
+                                /*
+                                var polygon = turf.polygon(coordinates);//将几何坐标拼接为字符串
+                                var pt = turf.toWgs84(polygon);
+                                var area = turf.area(pt);
+                                //    alert("绘制的面积是：" + area);
+                               
+                                area = area.toFixed(2);
+                                  */
+                                popup.style.display = ""
+                                var coordinate = evt.coordinate;
+
+                                content.innerHTML = '<p>id:' + feature.get('id') + '</p>' + '<p>Area：' + feature.get('area') + ' Sqft</p>';
+                                overlay.setPosition(coordinate);
+                            }
+                        }
+                        else {
+                            //隐藏弹出窗口
+                            popup.style.display = "none"; //销毁popup
+
+                        }
+                    }
+                    else {
+                        popup.style.display = "none"; //销毁popup
+
+                    }
+                });
+            }
+
+            // 监听地图层级变化
+            map.getView().on('change:resolution', function () {
+
+                if (this.getZoom() >= 20) {
+                    myMap.unOsmLayer();
+                    //  myMap.switchMap(5);
+                }
+                else {
+                    myMap.onOsmLayer();
+                    //   myMap.switchMap(4);
+                }
+            });
+
+
+    </script>
+        <script type="text/javascript" src="lib/w2ui_data.js"></script>
+</html>

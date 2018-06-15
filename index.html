@@ -8,7 +8,10 @@
   
 </head>
 <body>
+
+    
     <div><font size="2" >As of date</font><input type="us-date" id ="datepicker"></div>
+
     <div id="myLayout" style="height:800px;width:100%"></div>
 </body>
 <script>
@@ -81,7 +84,7 @@
             name: 'topLayout',
             panels: [
                 { type: 'left', size: 600 },
-                { type: 'right', size: 300 }
+                { type: 'right' }
             ]
         });
         //  w2ui['myGrid'].add({ "recid": "11", "UPNo": "SJM", "FNo": "01", "UNo": "100", "UnitType": "RT", "UnitTypeDesc": "Retail", "UnitStartDate": "01/01/18", "UnitEndDate": "12/31/55", "AreaType": "GFA", "AreaTypeDesc": "Gross Floor Area", "UnitArea": "990.00" })
@@ -131,8 +134,9 @@
 
     $('#leftForm').w2form({
         name: 'leftForm',
+        width: 100,
         fields: [
-            { name: 'As of Date', type: 'date',focus:-1 }
+            { name: 'As of Date', type: 'date' }
         ]
     });
 
