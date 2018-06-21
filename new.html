@@ -13,7 +13,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <title>Map Viewer (3-column layout)</title>
+    <title>SJM GIS DEMO</title>
     <link rel="stylesheet" href="assets/css/ol.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
@@ -404,7 +404,9 @@
             var view = new ol.View({
                 center: ol.proj.transform([113.57419204727863,
                   22.144437606093415], 'EPSG:4326', 'EPSG:3857'),
-                zoom: 18
+                zoom: 18,
+                minZoom: 17,
+                maxZoom: 20
             });
             map.setView(view);
             startHint();
@@ -430,6 +432,9 @@
                 }
                 else if(currAnalysis ==2){
                     showLeaseExpiration();
+                }
+                else if (currAnalysis == 3) {
+                    showSalesCategory();
                 }
             }
 
@@ -659,7 +664,7 @@
                                     width: 0.5
                                 }),
                                 fill: new ol.style.Fill({  //区的填充样式
-                                    color: '#FFCCCC'
+                                    color:  'rgba(255,204,204, 0.5)'
                                 }),
                                 text: createTextStyle(feature)
                             });
@@ -675,7 +680,7 @@
                                     width: 0.5
                                 }),
                                 fill: new ol.style.Fill({  //区的填充样式
-                                    color: '#99CCFF'
+                                    color:  'rgba(153,204,255, 0.5)'
                                 }),
                                 text: createTextStyle(feature)
                             });
@@ -691,7 +696,7 @@
                                     width: 0.5
                                 }),
                                 fill: new ol.style.Fill({  //区的填充样式
-                                    color: '#FFCC00'
+                                    color: 'rgba(255,204,0, 0.5)'
                                 }),
                                 text: createTextStyle(feature)
                             });
@@ -707,7 +712,7 @@
                                     width: 0.5
                                 }),
                                 fill: new ol.style.Fill({  //区的填充样式
-                                    color: '#66CC00'
+                                    color: 'rgba(102,204,0, 0.5)'
                                 }),
                                 text: createTextStyle(feature)
                             });
@@ -723,7 +728,7 @@
                                     width: 0.5
                                 }),
                                 fill: new ol.style.Fill({  //区的填充样式
-                                    color: '#FFFF99'
+                                    color: 'rgba(255,255,153, 0.5)'
                                 }),
                                 text: createTextStyle(feature)
                             });
@@ -738,6 +743,123 @@
                 return [style];
             };
 
+
+            // 租户类型目录
+            var cLayerStyleFunction = function (feature, resolution) {
+                var id = feature.get('id');
+                var style = null;
+
+              //  console.info(vancatUnits);
+                if (id < 0) {
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: 'black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(255, 255, 255, 1)'
+                        })
+
+                    });
+                }
+                else if (id == 0) {
+                    style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({  //区的边界样式
+                            color: '#black',
+                            width: 0.5
+                        }),
+                        fill: new ol.style.Fill({  //区的填充样式
+                            color: 'rgba(220, 220 ,220, 1)'
+                        })
+                    });
+                }
+                else {
+                    for (var i = 0; i < NAUnits.length; i++) {
+
+                        if (id == NAUnits[i]) {
+                            style = new ol.style.Style({
+                                stroke: new ol.style.Stroke({  //区的边界样式
+                                    color: 'black',
+                                    width: 0.5
+                                }),
+                                fill: new ol.style.Fill({  //区的填充样式
+                                    color: 'rgba(153,153,102, 0.5)'
+                                }),
+                                text: createTextStyle(feature)
+                            });
+                        }
+                    }
+
+                    for (var i = 0; i < BNKUnits.length; i++) {
+
+                        if (id == BNKUnits[i]) {
+                            style = new ol.style.Style({
+                                stroke: new ol.style.Stroke({  //区的边界样式
+                                    color: 'black',
+                                    width: 0.5
+                                }),
+                                fill: new ol.style.Fill({  //区的填充样式
+                                    color: 'rgba(255,153,102, 0.5)'
+                                }),
+                                text: createTextStyle(feature)
+                            });
+                        }
+                    }
+
+                    for (var i = 0; i < FASUnits.length; i++) {
+
+                        if (id == FASUnits[i]) {
+                            style = new ol.style.Style({
+                                stroke: new ol.style.Stroke({  //区的边界样式
+                                    color: 'black',
+                                    width: 0.5
+                                }),
+                                fill: new ol.style.Fill({  //区的填充样式
+                                    color:  'rgba(153,204,153, 0.5)'
+                                }),
+                                text: createTextStyle(feature)
+                            });
+                        }
+                    }
+
+                    for (var i = 0; i < FNBUnits.length; i++) {
+
+                        if (id == FNBUnits[i]) {
+                            style = new ol.style.Style({
+                                stroke: new ol.style.Stroke({  //区的边界样式
+                                    color: 'black',
+                                    width: 0.5
+                                }),
+                                fill: new ol.style.Fill({  //区的填充样式
+                                    color: 'rgba(255,255,0, 0.5)'
+                                }),
+                                text: createTextStyle(feature)
+                            });
+                        }
+                    }
+
+                    for (var i = 0; i < WATUnits.length; i++) {
+
+                        if (id == WATUnits[i]) {
+                            style = new ol.style.Style({
+                                stroke: new ol.style.Stroke({  //区的边界样式
+                                    color: 'black',
+                                    width: 0.5
+                                }),
+                                fill: new ol.style.Fill({  //区的填充样式
+                                    color: 'rgba(255,204,153, 0.5)'
+                                }),
+                                text: createTextStyle(feature)
+                            });
+                        }
+                    }
+
+                }
+
+
+                // 返回 style 数组
+                return [style];
+            };
 
             /***结束专题图样式***/
 
@@ -880,7 +1002,7 @@
                     }
                 });
             }
-
+            /*
             // 监听地图层级变化
             map.getView().on('change:resolution', function () {
 
@@ -892,7 +1014,7 @@
                     myMap.onOsmLayer();
                     //   myMap.switchMap(4);
                 }
-            });
+            });*/
 
 
     </script>
