@@ -14,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <title>SJM GIS DEMO</title>
-    <link rel="stylesheet" href="assets/css/ol.css" />
+  
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="libs/w2ui/w2ui-1.5.rc1.min.css" />
@@ -631,7 +631,7 @@
                 var style = null;
 
               //  console.info(vancatUnits);
-                if (id < 0) {
+                if (id == "-1") {
                     style = new ol.style.Style({
                         stroke: new ol.style.Stroke({  //区的边界样式
                             color: 'black',
@@ -643,7 +643,7 @@
 
                     });
                 }
-                else if (id == 0) {
+                else if (id == "0") {
                     style = new ol.style.Style({
                         stroke: new ol.style.Stroke({  //区的边界样式
                             color: '#black',
@@ -890,7 +890,7 @@
 
              
                 var features = vectorLayer.getSource().getFeatures();
-                console.info(features);
+             //   console.info(features);
                 for (var i = 0; i < features.length; i++) {
                     var feature = features[i];
                     //   console.info(feature);
